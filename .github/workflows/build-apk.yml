@@ -20,16 +20,20 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build release APK
+      - name: Build APK and Play bundle
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace
+          ./gradlew assembleRelease -PversionCode=${{ github.run_number }} --stacktrace
           cp app/build/outputs/apk/release/app-release.apk PixelPocket.apk
+          ./gradlew bundleRelease -PversionCode=${{ github.run_number }} -PunsignedRelease=true --stacktrace
+          cp app/build/outputs/bundle/release/app-release.aab PixelPocket-unsigned.aab
 
       - uses: actions/upload-artifact@v4
         with:
           name: PixelPocket-apk
-          path: PixelPocket.apk
+          path: |
+            PixelPocket.apk
+            PixelPocket-unsigned.aab
 
       - name: Publish downloadable release
         uses: softprops/action-gh-release@v2
@@ -37,7 +41,55 @@ jobs:
           tag_name: pixelpocket-v1.0.${{ github.run_number }}
           name: PixelPocket v1.0 (build ${{ github.run_number }})
           target_commitish: ${{ github.sha }}
-          files: PixelPocket.apk
+          files: |
+            PixelPocket.apk
+            PixelPocket-unsigned.aab
           body: |
             Download **PixelPocket.apk** below and open it on your Android phone (Android 8.0+).
             You may need to allow "Install unknown apps" for your browser or file manager.
+
+            `PixelPocket-unsigned.aab` must be signed with your private upload key before uploading to Google Play.
+
+  screenshots:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: PixelPocket-apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run app on emulator and capture screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 5X
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash .github/scripts/screenshots.sh
+
+      - name: Bundle screenshots
+        if: always()
+        run: cd shots && zip -q ../PixelPocket-screenshots.zip *.png || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PixelPocket-screenshots
+          path: shots/
+
+      - name: Attach screenshots to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pixelpocket-v1.0.${{ github.run_number }}
+          files: PixelPocket-screenshots.zip

@@ -6,13 +6,14 @@ plugins {
 
 android {
     namespace = "com.pixelpocket.gallery"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.pixelpocket.gallery"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 36
+        // CI passes -PversionCode=<run number> so every Play upload gets a higher code.
+        versionCode = (project.findProperty("versionCode") as String?)?.toInt() ?: 1
         versionName = "1.0"
     }
 
@@ -30,7 +31,9 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            // -PunsignedRelease=true leaves the output unsigned so it can be signed
+            // with the private Play upload key outside of this repository.
+            signingConfig = if (project.hasProperty("unsignedRelease")) null else signingConfigs.getByName("release")
         }
     }
 
