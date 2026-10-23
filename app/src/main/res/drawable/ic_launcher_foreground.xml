@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- photo card -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M34,36h40a4,4 0,0 1,4 4v28a4,4 0,0 1,-4 4h-40a4,4 0,0 1,-4 -4v-28a4,4 0,0 1,4 -4z" />
+    <!-- mountains -->
+    <path
+        android:fillColor="#FF6750A4"
+        android:pathData="M35,67l12,-15l8,10l6,-7l12,12z" />
+    <!-- sun -->
+    <path
+        android:fillColor="#FFFFB74D"
+        android:pathData="M66,46m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+</vector>

@@ -1,0 +1,43 @@
+name: Build PixelPocket APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --stacktrace
+          cp app/build/outputs/apk/release/app-release.apk PixelPocket.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PixelPocket-apk
+          path: PixelPocket.apk
+
+      - name: Publish downloadable release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pixelpocket-v1.0.${{ github.run_number }}
+          name: PixelPocket v1.0 (build ${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          files: PixelPocket.apk
+          body: |
+            Download **PixelPocket.apk** below and open it on your Android phone (Android 8.0+).
+            You may need to allow "Install unknown apps" for your browser or file manager.
