@@ -96,8 +96,10 @@ PixelPocket is a fast, simple and private gallery for all your photos and videos
 | Feature graphic | `graphics/feature-graphic-1024x500.png` | 1024×500 PNG/JPG |
 | Phone screenshots | `screenshots/*.png` | 2–8 images, 1080×1920 |
 
-Suggested 8 screenshots, in order: `02_gallery`, `03_sort_options`, `04_multi_select`,
-`05_move_to_album`, `07_viewer`, `08_crop`, `09_save_preferences`, `01_registration`.
+Play allows up to 8 phone screenshots. Suggested, in order: `02_gallery`, `03_sort_options`,
+`04_multi_select`, `05_move_to_album`, `07_viewer`, `08_crop`, `09_save_preferences`, `10_settings`.
+(`01_registration` and `06_select_all` are spares.) All were captured from the real app on an
+Android 14 emulator.
 Tablet screenshots are optional; you can skip them.
 
 **Contact details:** your support email (required) — website optional.
