@@ -117,6 +117,10 @@ support email. If you merge the branch into `main`, update the URL to use `main`
 ### Ads
 `No, my app does not contain ads`
 
+### Advertising ID
+`No` — the app has no ads, analytics or Google Play services SDKs and does not declare the
+`com.google.android.gms.permission.AD_ID` permission.
+
 ### App access
 `All functionality is available without special access`
 (Registration only stores a name/email on the device; there is no login or server account.)
